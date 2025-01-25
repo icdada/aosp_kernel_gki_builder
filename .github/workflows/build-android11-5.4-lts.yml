@@ -13,7 +13,7 @@ jobs:
     permissions:
       contents: write
     name: BUILD ANDROID11-5.4-LTS
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: github.event.repository.owner.id == github.event.sender.id
     env:
       CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
