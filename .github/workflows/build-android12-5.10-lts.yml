@@ -72,7 +72,7 @@ jobs:
  
     - name: Setting up the kernel compilation environment
       run: |
-  
+          # 设置环境变量
           echo "BUILD_TIME=$(TZ=Asia/Kolkata date "+%Y%m%d-%H%M")-UTC+530" >> $GITHUB_ENV
           echo "DEVICE=$(echo ${{ env.KERNEL_CONFIG }} | sed 's!vendor/!!;s/_defconfig//;s/_user//;s/-perf//')" >> $GITHUB_ENV
       
@@ -106,12 +106,9 @@ jobs:
           cd ..
           sudo rm -rf Python-2.7.18 Python-2.7.18.tgz
       
-          # 手动安装 lib32ncurses5-dev
-          sudo apt-get install -y libncurses5-dev:i386
-          if [ $? -ne 0 ]; then
-            echo "Error occurred during lib32ncurses5-dev installation"
-            exit 1
-          fi
+          # 安装 libncurses6:i386 并创建软链接
+          sudo apt-get install -y libncurses6:i386
+          sudo ln -s /usr/lib/i386-linux-gnu/libncurses.so.6 /usr/lib/i386-linux-gnu/libncurses.so.5
       
           # 检查可升级的包并升级
           sudo apt list --upgradable
