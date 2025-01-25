@@ -13,7 +13,7 @@ jobs:
     permissions:
       contents: write
     name: BUILD ANDROID12-5.10-LTS
-    runs-on: Ubuntu20.04
+    runs-on: ubuntu-23.04
     if: github.event.repository.owner.id == github.event.sender.id
     env:
       CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
@@ -72,59 +72,13 @@ jobs:
  
     - name: Setting up the kernel compilation environment
       run: |
-          # 设置环境变量
-          echo "BUILD_TIME=$(TZ=Asia/Kolkata date "+%Y%m%d-%H%M")-UTC+530" >> $GITHUB_ENV
-          echo "DEVICE=$(echo ${{ env.KERNEL_CONFIG }} | sed 's!vendor/!!;s/_defconfig//;s/_user//;s/-perf//')" >> $GITHUB_ENV
-      
-          # 更新系统包索引
-          sudo apt update
-          if [ $? -ne 0 ]; then
-            echo "Error occurred during apt update"
-            exit 1
-          fi
-      
-          # 安装编译内核所需的工具和库
-          sudo apt install -y \
-            git ccache automake flex lzop bison gperf build-essential zip curl \
-            zlib1g-dev g++-multilib libxml2-utils bzip2 libbz2-dev libbz2-1.0 \
-            libghc-bzlib-dev squashfs-tools pngcrush schedtool dpkg-dev \
-            liblz4-tool make optipng maven libssl-dev pwgen libswitch-perl \
-            policycoreutils minicom libxml-sax-base-perl libxml-simple-perl bc \
-            libc6-dev-i386 libx11-dev lib32z-dev libgl1-mesa-dev xsltproc \
-            unzip device-tree-compiler rename libelf-dev dwarves
-          if [ $? -ne 0 ]; then
-            echo "Error occurred during package installation"
-            exit 1
-          fi
-      
-          # 手动安装 Python 2.7
-          wget https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz
-          sudo tar xzf Python-2.7.18.tgz
-          cd Python-2.7.18
-          sudo ./configure --enable-optimizations
-          sudo make altinstall
-          cd ..
-          sudo rm -rf Python-2.7.18 Python-2.7.18.tgz
-      
-          # 安装 libncurses6:i386 并创建软链接
-          sudo apt-get install -y libncurses6:i386
-          sudo ln -s /usr/lib/i386-linux-gnu/libncurses.so.6 /usr/lib/i386-linux-gnu/libncurses.so.5
-      
-          # 检查可升级的包并升级
-          sudo apt list --upgradable
-          sudo apt upgrade -y
-          if [ $? -ne 0 ]; then
-            echo "Error occurred during apt upgrade"
-            exit 1
-          fi
-      
-          # 创建工作目录
-          mkdir -p $GITHUB_WORKSPACE/kernel_workspace
-          if [ $? -ne 0 ]; then
-            echo "Error occurred while creating kernel workspace directory"
-            exit 1
-          fi
-
+        echo "BUILD_TIME=$(TZ=Asia/Kolkata date "+%Y%m%d-%H%M")-UTC+530" >> $GITHUB_ENV
+        echo "DEVICE=$(echo ${{ env.KERNEL_CONFIG }} | sed 's!vendor/!!;s/_defconfig//;s/_user//;s/-perf//')" >> $GITHUB_ENV
+        sudo apt update
+        sudo apt install -y git ccache automake flex lzop bison gperf build-essential zip curl zlib1g-dev g++-multilib libxml2-utils bzip2 libbz2-dev libbz2-1.0 libghc-bzlib-dev squashfs-tools pngcrush schedtool dpkg-dev liblz4-tool make optipng maven libssl-dev pwgen libswitch-perl policycoreutils minicom libxml-sax-base-perl libxml-simple-perl bc libc6-dev-i386 lib32ncurses5-dev libx11-dev lib32z-dev libgl1-mesa-dev xsltproc unzip device-tree-compiler python2 rename libelf-dev dwarves
+        sudo apt list --upgradable
+        sudo apt upgrade
+        mkdir -p $GITHUB_WORKSPACE/kernel_workspace
     - name: Set Swap to 10GB
       uses: pierotofy/set-swap-space@master
       with:
