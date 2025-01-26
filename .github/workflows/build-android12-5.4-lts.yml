@@ -80,7 +80,25 @@ jobs:
         sudo apt install -y libc6
         sudo apt upgrade
         mkdir -p $GITHUB_WORKSPACE/kernel_workspace
+        # Download GLIBC 2.33 source code
+          wget https://ftp.gnu.org/gnu/glibc/glibc-2.33.tar.gz
+          tar -xzf glibc-2.33.tar.gz
+          cd glibc-2.33
 
+          # Create a build directory
+          mkdir build
+          cd build
+
+          # Configure and build GLIBC
+          ../configure --prefix=/usr/local
+          make -j$(nproc)
+
+          # Install GLIBC
+          sudo make install
+
+          # Update system links to use the new GLIBC
+          sudo ln -sf /usr/local/lib/libc.so.6 /lib/x86_64-linux-gnu/libc.so.6
+          sudo ln -sf /usr/local/lib/libm.so.6 /lib/x86_64-linux-gnu/libm.so.6
     - name: Set Swap to 10GB
       uses: pierotofy/set-swap-space@master
       with:
