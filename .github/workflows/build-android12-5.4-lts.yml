@@ -84,6 +84,7 @@ jobs:
         sudo apt install -y libc6
         sudo apt upgrade
         mkdir -p $GITHUB_WORKSPACE/kernel_workspace
+        mkdir -p /home/runner/work/aosp_kernel_gki_builder/aosp_kernel_gki_builder/kernel_workspace/android-kernel/out
     - name: Set Swap to 10GB
       uses: pierotofy/set-swap-space@master
       with:
