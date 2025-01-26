@@ -83,6 +83,7 @@ jobs:
         sudo apt list --upgradable
         sudo apt install -y libc6
         sudo apt upgrade
+        mkdir -p $GITHUB_WORKSPACE/kernel_workspace
     - name: Set Swap to 10GB
       uses: pierotofy/set-swap-space@master
       with:
